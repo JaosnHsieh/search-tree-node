@@ -6,54 +6,48 @@ import "semantic-ui-css/semantic.min.css";
 
 import "react-checkbox-tree/lib/react-checkbox-tree.css";
 import "font-awesome/css/font-awesome.min.css";
-// import nodesData from "./labelsToNodes";
+import nodesData from "./labelsToNodes";
 // import _ from "lodash";
 
-const nodes = [
-  {
-    value: "mars",
-    label: "Mars",
-    children: [
-      { value: "phobos", label: "Phobos" },
-      { value: "deimos", label: "Deimos", children:[
-        {
-          value: "layer3-1",
-          label: "layer3-1",
-          children: [
-            { value: "phobos-4-1", label: "phobos-4-1" },
-            { value: "phobos-4-2", label: "phobos-4-2" }
-          ]
-        },
-        {
-          value: "Mars3-2",
-          label: "Mars3-2"
-        }
-      ] }
-    ]
-  },
-  {
-    value: "qq2",
-    label: "qq2",
-    children: [
-      { value: "photo2", label: "photo2" },
-      { value: "demino2", label: "demino2", children:[
-        {
-          value: "layer3-1",
-          label: "layer3-1",
-          children: [
-            { value: "phobos-4-1-2", label: "phobos-4-1-2" },
-            { value: "phobos-4-2-2", label: "phobos-4-2-2" }
-          ]
-        },
-        {
-          value: "Mars3-2-2",
-          label: "Mars3-2-2"
-        }
-      ] }
-    ]
-  }
-];
-const nodesData = nodes;
+// const nodes = [
+//   {
+//     value: "1-1",
+//     children: [
+//       { value: "1-1-1"},
+//       { value: "1-1-2", children:[
+//         {
+//           value: "1-1-2-1",
+//           children: [
+//             { value: "1-1-2-1-1" },
+//             { value: "1-1-2-1-2" }
+//           ]
+//         },
+//         {
+//           value: "1-1-2-2"
+//         }
+//       ] }
+//     ]
+//   },
+//   {
+//     value: "1-2",
+//     children: [
+//       { value: "1-2-1"},
+//       { value: "1-2-2", children:[
+//         {
+//           value: "1-2-2-1",
+//           children: [
+//             { value: "1-2-2-1-1" },
+//             { value: "1-2-2-1-2" }
+//           ]
+//         },
+//         {
+//           value: "1-2-2-2"
+//         }
+//       ] }
+//     ]
+//   },
+// ];
+// const nodesData = nodes;
 
 class App extends Component {
   constructor() {
@@ -69,13 +63,33 @@ class App extends Component {
     this.setState({ keyword: data.value });
   };
 
-  keywordFilter = (nodes, keyword) => {
+ keywordFilter = (nodes, keyword) => {
     const newNodes = [];
     for(let n of nodes){
-      if(n.label.indexOf(keyword)!==-1){
-        newNodes.push(n);
+      if(n.children){
+          const next = this.keywordFilter(n.children,keyword);
+        if(next.length > 0){
+            n.children = next;
+            newNodes.push(n);
+            continue;            
+        };
+        if(n.label.includes(keyword)){
+            n.children = [];
+            newNodes.push(n);
+            continue;
+        }
+        
+        // console.log('n.label', n.value);
+      }else{
+          if(n.label.includes(keyword)){
+            // console.log('#n.label', n.value);
+            newNodes.push(n);
+        }
+
       }
+      
     }
+    // console.log('newNodes',newNodes);
     return newNodes;
   };
 
